@@ -60,7 +60,7 @@ function App() {
           <h1>Detyre si parapergaditje e nje workshopi</h1>
           {
             renderData?.map((element) => (
-              <div className="border-top py-3" key={element.id}>
+              <div className="border-top border-bottom py-3" key={element.id}>
                 <Input
                   classNames="test"
                   id={element.id}
