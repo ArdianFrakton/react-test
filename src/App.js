@@ -7,42 +7,32 @@ function App() {
   const [checkboxData, setData] = useState([]);
   const [renderData, setRenderdata] = useState([]);
 
-  // const getInputs = (inputs, dataArr) => {
-  //   let array = [];
-  //   inputs.forEach((subChildInput) => {
-  //     const ay = dataArr.filter((e) => (subChildInput.id === e.parent));
-  //     array.push(ay);
-  //   });
-  //   return array;
-  // };
-
   const getSortedCheckbox = (response) => {
     const arr = [];
     response.forEach((e) => {
       const checkParent = arr.find((el) => (el.id === e.id));
       if (!checkParent && (e.parent === 0)) {
-        const x = response.filter((el) => el.parent === e.id);
-        if (x) {
+        const checkArr = response.filter((el) => el.parent === e.id);
+        if (checkArr) {
           const arrChild = [];
-          x.forEach((childInput) => {
+          checkArr.forEach((childInput) => {
             const arrSubChild = [];
-            const y = response.filter((event) => (childInput.id === event.parent));
-            if (y) {
-              y.forEach((subChildInput) => {
-                const ay = response.filter((e) => (subChildInput.id === e.parent));
-                const xxxxx = {...subChildInput, child: ay };
-                arrSubChild.push(xxxxx);
+            const checkArray = response.filter((event) => (childInput.id === event.parent));
+            if (checkArray) {
+              checkArray.forEach((subChildInput) => {
+                const getChild = response.filter((e) => (subChildInput.id === e.parent));
+                const getSubChild = {...subChildInput, child: getChild };
+                arrSubChild.push(getSubChild);
               })
             }
-            const aaa = {...childInput, subChild: arrSubChild };
-            arrChild.push(aaa);
+            const getChild = {...childInput, subChild: arrSubChild };
+            arrChild.push(getChild);
           })
-          const test = {...e, child: arrChild };
-            arr.push(test);
+          const parentChild = {...e, child: arrChild };
+          arr.push(parentChild);
         }
       }
     });
-    console.log('arr', arr);
     setRenderdata(arr);
   };
 
@@ -57,7 +47,7 @@ function App() {
     fetch("https://frakton.dev/articles.php")
     .then(data => { return data.json() })
     .then(datum => {
-      const results = datum?.map((obj) => ({ ...obj, defaultValue: true }));
+      const results = datum?.map((obj) => ({ ...obj, defaultValue: false }));
       setData(results);
       getSortedCheckbox(results);
     });
@@ -67,58 +57,56 @@ function App() {
     <div className="App">
       {renderData && (
         <div className="container">
-          <h1>Ardian</h1>
+          <h1>Detyre si parapergaditje e nje workshopi</h1>
           {
-            renderData.map((element) => (
-              <div key={element.id}>
+            renderData?.map((element) => (
+              <div className="border-top py-3" key={element.id}>
                 <Input
                   classNames="test"
                   id={element.id}
                   labelName={element.name}
                   defaultValue={element.defaultValue}
-                  checked={(element.defaultValue || element.defaultValue)}
+                  checked={element.defaultValue}
                   change={(event) => handleChange(event)}
                 />
                 {
-                  element?.child.map((child) => (
+                  element.defaultValue && element?.child.map((child) => (
                     <div key={child.id}>
                       <Input
                         classNames="mx-3"
                         id={child.id}
                         labelName={child.name}
                         defaultValue={child.defaultValue}
-                        checked={(child.defaultValue || child.defaultValue)}
+                        checked={child.defaultValue}
                         change={(event) => handleChange(event)}
                         checkStat={!element.defaultValue}
                       />
                       {
-                        child?.subChild.map((subChild) => (
-                          <div key={child.id}>
+                        child.defaultValue && child?.subChild.map((subChild) => (
+                          <div key={subChild.id}>
                             <Input
                               classNames="mx-5"
                               id={subChild.id}
                               labelName={subChild.name}
                               defaultValue={subChild.defaultValue}
-                              checked={(subChild.defaultValue || subChild.defaultValue)}
+                              checked={subChild.defaultValue}
                               change={(event) => handleChange(event)}
                               checkStat={!element.defaultValue || !child.defaultValue}
                             />
                              {
-                                subChild?.child.map((obj) => (
-                                  <div key={obj.id}>
-                                    <Input
-                                      key={obj.id}
-                                      classNames="mx-5 px-5"
-                                      id={obj.id}
-                                      labelName={obj.name}
-                                      defaultValue={obj.defaultValue}
-                                      checked={(obj.defaultValue || obj.defaultValue)}
-                                      change={(event) => handleChange(event)}
-                                      checkStat={!element.defaultValue || !child.defaultValue || !subChild.defaultValue}
-                                    />
-                                  </div>
-                                ))
-                              }
+                              subChild.defaultValue && subChild?.child.map((obj) => (
+                                <Input
+                                  key={obj.id}
+                                  classNames="mx-5 px-5"
+                                  id={obj.id}
+                                  labelName={obj.name}
+                                  defaultValue={obj.defaultValue}
+                                  checked={obj.defaultValue}
+                                  change={(event) => handleChange(event)}
+                                  checkStat={!element.defaultValue || !child.defaultValue || !subChild.defaultValue}
+                                />
+                              ))
+                            }
                           </div>
                         ))
                       }
